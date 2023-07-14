@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Charging Indicator</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+    h1 {
+      margin-top: 50px;
+    }
+    #charging-icon {
+      width: 100px;
+      height: 100px;
+      margin: 20px auto;
+      background-color: #ccc;
+      border-radius: 50%;
+      position: relative;
+    }
+    #charging-icon::before,
+    #charging-icon::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      background-color: #000;
+      transform: translate(-50%, -50%);
+    }
+    #charging-icon::before {
+      width: 10px;
+      height: 40px;
+      border-radius: 5px;
+    }
+    #charging-icon::after {
+      width: 40px;
+      height: 10px;
+      border-radius: 5px;
+    }
+    .charging {
+      animation: charging-animation 1s infinite;
+    }
+    @keyframes charging-animation {
+      0% {
+        opacity: 0.5;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0.5;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Charging Indicator</h1>
+  <div id="charging-icon"></div>
+
+  <script>
+    const chargingIcon = document.getElementById('charging-icon');
+
+    // Function to check if the device is charging
+    function checkChargingStatus() {
+      if (navigator.getBattery) {
+        navigator.getBattery().then(function (battery) {
+          updateChargingIndicator(battery.charging);
+          battery.addEventListener('chargingchange', function () {
+            updateChargingIndicator(battery.charging);
+          });
+        });
+      } else if (navigator.battery) {
+        updateChargingIndicator(navigator.battery.charging);
+        navigator.battery.addEventListener('chargingchange', function () {
+          updateChargingIndicator(navigator.battery.charging);
+        });
+      } else {
+        console.error('Battery API not supported in this browser.');
+      }
+    }
+
+    // Function to update the charging indicator based on charging status
+    function updateChargingIndicator(isCharging) {
+      if (isCharging) {
+        chargingIcon.classList.add('charging');
+      } else {
+        chargingIcon.classList.remove('charging');
+      }
+    }
+
+    // Check charging status on page load
+    checkChargingStatus();
+  </script>
+</body>
+</html>
